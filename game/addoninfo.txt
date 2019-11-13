@@ -1,6 +1,6 @@
 "AddonInfo"
 {
-	"maps"			"desert_duo mines_trio forest_solo desert_quintet temple_quartet desert_octet temple_sextet core_quartet battlegrounds"
+	"maps"			"desert_duo mines_trio forest_solo desert_quintet temple_quartet desert_octet temple_sextet core_quartet battleground"
 	"IsPlayable"	"1"
 	"HeroGuidesSupported" "1"
 	"PenaltiesEnabled"			"0"
