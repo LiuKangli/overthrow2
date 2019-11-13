@@ -85,6 +85,8 @@ function COverthrowGameMode:OnGameRulesStateChange()
 			self.TEAM_KILLS_TO_WIN = 55
 		elseif GetMapName() == "temple_sextet" then
 			self.TEAM_KILLS_TO_WIN = 70
+		elseif GetMapName() == "battleground" then
+			self.TEAM_KILLS_TO_WIN = 20
 		else
 			self.TEAM_KILLS_TO_WIN = 30
 		end
@@ -100,6 +102,10 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		self.countdownEnabled = true
 		CustomGameEventManager:Send_ServerToAllClients( "show_timer", {} )
 		DoEntFire( "center_experience_ring_particles", "Start", "0", 0, self, self  )
+
+		if GetMapName() == "battleground" then
+			FFA:Init()
+		end
 	end
 end
 
@@ -148,6 +154,13 @@ function COverthrowGameMode:OnNPCSpawned( event )
 			spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_silencer_new_int_steal", {})
 		end
 	end)
+
+	if GetMapName() == "battleground" then
+		local newSpawnPos = Vector(RandomInt(0, 22100) - 11200, RandomInt(0, 22000) - 11200, 256)
+		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
+		GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
+		spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)
+	end
 
 	if GetMapName() == "desert_octet" and spawnedUnit:GetName() == "npc_dota_hero_warlock" then
 		if spawnedUnit.firstspawn == nil then

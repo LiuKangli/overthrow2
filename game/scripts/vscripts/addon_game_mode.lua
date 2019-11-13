@@ -46,6 +46,7 @@ require("common/init")
 require("utility_functions")
 require("events")
 require("items")
+require("ffa")
 
 WebApi.customGame = "Overthrow"
 
@@ -237,6 +238,20 @@ function COverthrowGameMode:InitGameMode()
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_BADGUYS, 6 )
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_1, 6 )
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_2, 6 )
+		self.m_GoldRadiusMin = 300
+		self.m_GoldRadiusMax = 1400
+		self.m_GoldDropPercent = 12
+	elseif GetMapName() == "battleground" then
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_GOODGUYS, 4 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_BADGUYS, 4 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_1, 4 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_2, 4 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_3, 4 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_4, 4 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_5, 0 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_6, 0 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_7, 0 )
+		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_8, 0 )
 		self.m_GoldRadiusMin = 300
 		self.m_GoldRadiusMax = 1400
 		self.m_GoldDropPercent = 12
@@ -1112,11 +1127,7 @@ RegisterCustomEventListener("OnTimerClick", function(keys)
 end)
 
 votimer = {}
-voused = {}
 SelectVO = function(keys)
-	local psets = Patreons:GetPlayerSettings(keys.PlayerID)
-	if voused[keys.PlayerID] ~= nil and psets.level == 0 then return end
-	voused[keys.PlayerID] = true
 	print(keys.num)
 	local heroes = {
 		"abaddon",
