@@ -101,7 +101,8 @@ function FFA:Init()
 	self.team_congestion[DOTA_TEAM_CUSTOM_8] = 0
 
 	Timers:CreateTimer(0, function()
-		if GetDOTATime(false, false) > 0 then
+		print(GameRules:GetDOTATime(false, true))
+		if GameRules:GetDOTATime(false, true) > 0 then
 			CustomGameEventManager:Send_ServerToAllClients("battleground_show_scoreboard", {})
 
 			for _, hero in pairs(HeroList:GetAllHeroes()) do

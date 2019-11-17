@@ -291,9 +291,14 @@ function COverthrowGameMode:InitGameMode()
 	GameRules:SetCustomGameSetupAutoLaunchDelay(1)
 
 	if IsInToolsMode() then
+		GameRules:GetGameModeEntity():SetDraftingHeroPickSelectTimeOverride( 5 )
 		GameRules:GetGameModeEntity():SetDraftingBanningTimeOverride(0)
 		GameRules:LockCustomGameSetupTeamAssignment(false)
 		GameRules:SetCustomGameSetupAutoLaunchDelay(10)
+	end
+
+	if GetMapName() == "battleground" then
+		GameRules:SetPreGameTime(30)
 	end
 
 	ListenToGameEvent( "game_rules_state_change", Dynamic_Wrap( COverthrowGameMode, 'OnGameRulesStateChange' ), self )

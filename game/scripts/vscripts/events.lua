@@ -98,6 +98,10 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		CustomNetTables:SetTableValue( "game_state", "victory_condition", { kills_to_win = self.TEAM_KILLS_TO_WIN } );
 
 		self._fPreGameStartTime = GameRules:GetGameTime()
+
+		if GetMapName() == "battleground" then
+			FFA:Init()
+		end
 	end
 
 	if nNewState == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
@@ -105,10 +109,6 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		self.countdownEnabled = true
 		CustomGameEventManager:Send_ServerToAllClients( "show_timer", {} )
 		DoEntFire( "center_experience_ring_particles", "Start", "0", 0, self, self  )
-
-		if GetMapName() == "battleground" then
-			FFA:Init()
-		end
 	end
 end
 
@@ -165,7 +165,9 @@ function COverthrowGameMode:OnNPCSpawned( event )
 	if GetMapName() == "battleground" then
 		if not spawnedUnit.firstBattlegroundSpawn then
 			spawnedUnit.firstBattlegroundSpawn = true
-			spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_battleground_game_start", {})
+			if GameRules:GetDOTATime(false, true) <= 0 then
+				spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_battleground_game_start", {})
+			end
 		end
 
 		local newSpawnPos = Vector(RandomInt(0, 22100) - 11200, RandomInt(0, 22000) - 11200, 256)
