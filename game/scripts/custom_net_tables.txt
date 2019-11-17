@@ -4,8 +4,8 @@
 	[
 		"game_state",
 		"disable_help",
-
 		"custom_stats",
+		"battleground_scoreboard",
 		"cosmetics"
 	]
 }

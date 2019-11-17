@@ -49,6 +49,11 @@ function FFA:Init()
 					FindClearSpaceForUnit(self.player_heroes[id], newSpawnPos, true)
 					GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
 
+					PlayerResource:SetCameraTarget(id, self.player_heroes[id])
+					Timers:CreateTimer(0.1, function()
+						PlayerResource:SetCameraTarget(id, nil)
+					end)
+
 					self.player_positions[id] = self.player_heroes[id]:GetAbsOrigin()
 					self.player_teams[id] = self.player_heroes[id]:GetTeam()
 					self.max_player_id = self.max_player_id + 1
@@ -97,8 +102,13 @@ function FFA:Init()
 
 	Timers:CreateTimer(0, function()
 		if self.max_player_id >= 23 then
+			CustomGameEventManager:Send_ServerToAllClients("battleground_show_scoreboard", {})
+
+			for _, hero in pairs(HeroList:GetAllHeroes()) do
+				hero:RemoveModifierByName("modifier_battleground_game_start")
+			end
+
 			self:OptimizeTeams()
-			return 0.03
 		else
 			return 1
 		end
@@ -243,4 +253,8 @@ function FFA:OptimizeTeams()
 		PlayerResource:SetCustomTeamAssignment(delta_player, delta_team)
 		self.player_heroes[delta_player]:SetTeam(delta_team)
 	end
+
+	Timers:CreateTimer(0.03, function()
+		self:OptimizeTeams()
+	end)
 end

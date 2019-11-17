@@ -1,6 +1,8 @@
 "addon"
 {
 	// Common start
+	"pre_battleground_victory"						""
+	"post_battleground_victory"						" wins!"
 	"patreon_bonus_button_text"						"Free Boots"
 	"patreon_bonus_button_tooltip"					"Support us to get this feature"
 

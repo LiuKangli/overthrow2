@@ -31,6 +31,9 @@
 		"new_stat_wards"											"Wards sentries/obsrvrs"
 		"new_stat_killed_heroes"									"Killed enemies"
 
+		"pre_battleground_victory"									""
+		"post_battleground_victory"									" wins!"
+
 		"DOTA_Tooltip_modifier_get_xp"					"Golden Aura"
 		"DOTA_Tooltip_modifier_get_xp_Description"		"Gaining more gold and experience!"
 

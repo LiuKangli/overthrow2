@@ -55,6 +55,8 @@ LinkLuaModifier("modifier_core_spawn_movespeed", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_core_courier", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_silencer_new_int_steal", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_patreon_courier", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_battleground_disconnected", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_battleground_game_start", LUA_MODIFIER_MOTION_NONE)
 
 ---------------------------------------------------------------------------
 -- Precache
@@ -284,11 +286,15 @@ function COverthrowGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetDamageFilter( Dynamic_Wrap( COverthrowGameMode, "DamageFilter" ), self )
 	GameRules:GetGameModeEntity():SetPauseEnabled(IsInToolsMode())
 	GameRules:GetGameModeEntity():SetDraftingHeroPickSelectTimeOverride( 60 )
-	if IsInToolsMode() then
-		GameRules:GetGameModeEntity():SetDraftingBanningTimeOverride(0)
-	end
+
 	GameRules:LockCustomGameSetupTeamAssignment(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(1)
+
+	if IsInToolsMode() then
+		GameRules:GetGameModeEntity():SetDraftingBanningTimeOverride(0)
+		GameRules:LockCustomGameSetupTeamAssignment(false)
+		GameRules:SetCustomGameSetupAutoLaunchDelay(10)
+	end
 
 	ListenToGameEvent( "game_rules_state_change", Dynamic_Wrap( COverthrowGameMode, 'OnGameRulesStateChange' ), self )
 	ListenToGameEvent( "npc_spawned", Dynamic_Wrap( COverthrowGameMode, "OnNPCSpawned" ), self )
@@ -478,6 +484,18 @@ end
 ---------------------------------------------------------------------------
 function COverthrowGameMode:UpdateScoreboard()
 	local sortedTeams = self:GetSortedTeams()
+
+	if GetMapName() == "battleground" then
+		local scoreboard = {}
+		for order, table in pairs(sortedTeams) do
+			scoreboard[order] = {}
+			scoreboard[order].score = table.score
+			if PlayerResource:GetSelectedHeroEntity(table.team) then
+				scoreboard[order].hero = PlayerResource:GetSelectedHeroEntity(table.team):GetUnitName()
+			end
+		end
+		CustomNetTables:SetTableValue("battleground_scoreboard", "scoreboard", scoreboard)
+	end
 	-- for _, t in ipairs(sortedTeams) do
 	-- 	-- Scaleform UI Scoreboard
 	-- 	FireGameEvent("score_board", {
@@ -567,10 +585,13 @@ function COverthrowGameMode:OnThink()
 	end
 
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+
 		--Spawn Gold Bags
-		COverthrowGameMode:ThinkGoldDrop()
-		COverthrowGameMode:ThinkSpecialItemDrop()
-		COverthrowGameMode:ThinkPumpkins()
+		if GetMapName() ~= "battleground" then
+			COverthrowGameMode:ThinkGoldDrop()
+			COverthrowGameMode:ThinkSpecialItemDrop()
+			COverthrowGameMode:ThinkPumpkins()
+		end
 	end
 
 	for playerId = 0, 23 do
@@ -582,6 +603,20 @@ function COverthrowGameMode:OnThink()
 				end
 			elseif connectionState == DOTA_CONNECTION_STATE_CONNECTED then
 				DISCONNECT_TIMES[playerId] = nil
+			end
+
+			if GetMapName() == "battleground" then
+				if connectionState == DOTA_CONNECTION_STATE_DISCONNECTED or connectionState == DOTA_CONNECTION_STATE_ABANDONED then
+					local playerHero = PlayerResource:GetSelectedHeroEntity(playerId)
+					if playerHero and not playerHero:HasModifier("modifier_battleground_disconnected") then
+						playerHero:AddNewModifier(playerHero, nil, "modifier_battleground_disconnected", {})
+					end
+				else
+					local playerHero = PlayerResource:GetSelectedHeroEntity(playerId)
+					if playerHero and playerHero:HasModifier("modifier_battleground_disconnected") then
+						playerHero:RemoveModifierByName("modifier_battleground_disconnected")
+					end
+				end
 			end
 		end
 	end
@@ -671,6 +706,17 @@ function COverthrowGameMode:GatherAndRegisterValidTeams()
 		end
 		print( " - " .. team .. " ( " .. GetTeamName( team ) .. " ) -> max players = " .. tostring(maxPlayers) )
 		GameRules:SetCustomGameTeamMaxPlayers( team, maxPlayers )
+	end
+
+	if GetMapName() == "battleground" then
+		print("Battleground map, ignoring everything and using alternate player-based teams")
+		foundTeamsList = nil
+		foundTeamsList = {}
+		for id = 0, 23 do
+			table.insert( foundTeamsList, id )
+		end
+
+		self.m_GatheredShuffledTeams = table.shuffled( foundTeamsList )
 	end
 end
 
@@ -832,8 +878,15 @@ end
 
 function COverthrowGameMode:GetSortedTeams()
 	local sortedTeams = {}
-	for _, team in pairs(self.m_GatheredShuffledTeams) do
-		table.insert(sortedTeams, { team = team, score = GetTeamHeroKills(team) })
+
+	if GetMapName() == "battleground" then
+		for _, team in pairs(self.m_GatheredShuffledTeams) do
+			table.insert(sortedTeams, { team = team, score = PlayerResource:GetKills(team) })
+		end
+	else
+		for _, team in pairs(self.m_GatheredShuffledTeams) do
+			table.insert(sortedTeams, { team = team, score = GetTeamHeroKills(team) })
+		end
 	end
 
 	table.sort(sortedTeams, function(a, b) return a.score > b.score end)

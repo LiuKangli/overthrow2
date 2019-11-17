@@ -86,7 +86,10 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		elseif GetMapName() == "temple_sextet" then
 			self.TEAM_KILLS_TO_WIN = 70
 		elseif GetMapName() == "battleground" then
-			self.TEAM_KILLS_TO_WIN = 20
+			self.TEAM_KILLS_TO_WIN = 25
+			if IsInToolsMode() then
+				self.TEAM_KILLS_TO_WIN = 5
+			end
 		else
 			self.TEAM_KILLS_TO_WIN = 30
 		end
@@ -136,6 +139,10 @@ function COverthrowGameMode:OnNPCSpawned( event )
 		if _G.mainTeamCouriers[team] == nil then
 			_G.mainTeamCouriers[team] = spawnedUnit
 		end
+
+		if GetMapName() == "battleground" then
+			spawnedUnit:Destroy()
+		end
 	end
 
 	if not spawnedUnit:IsRealHero() then return end
@@ -156,6 +163,11 @@ function COverthrowGameMode:OnNPCSpawned( event )
 	end)
 
 	if GetMapName() == "battleground" then
+		if not spawnedUnit.firstBattlegroundSpawn then
+			spawnedUnit.firstBattlegroundSpawn = true
+			spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_battleground_game_start", {})
+		end
+
 		local newSpawnPos = Vector(RandomInt(0, 22100) - 11200, RandomInt(0, 22000) - 11200, 256)
 		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
 		GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
@@ -293,36 +305,54 @@ function COverthrowGameMode:OnTeamKillCredit( event )
 --	print( "OnKillCredit" )
 --	DeepPrint( event )
 
-	local nKillerID = event.killer_userid
-	local nTeamID = event.teamnumber
-	local nTeamKills = event.herokills
-	local nKillsRemaining = self.TEAM_KILLS_TO_WIN - nTeamKills
+	Timers:CreateTimer(0.1, function()
+		local nKillerID = event.killer_userid
+		local nTeamID = event.teamnumber
+		local nTeamKills = event.herokills
+		local nKillsRemaining = self.TEAM_KILLS_TO_WIN - nTeamKills
 
-	local broadcast_kill_event =
-	{
-		killer_id = event.killer_userid,
-		team_id = event.teamnumber,
-		team_kills = nTeamKills,
-		kills_remaining = nKillsRemaining,
-		victory = 0,
-		close_to_victory = 0,
-		very_close_to_victory = 0,
-	}
+		local broadcast_kill_event =
+		{
+			killer_id = event.killer_userid,
+			team_id = event.teamnumber,
+			team_kills = nTeamKills,
+			kills_remaining = nKillsRemaining,
+			victory = 0,
+			close_to_victory = 0,
+			very_close_to_victory = 0,
+		}
 
-	if nKillsRemaining <= 0 then
-		GameRules:SetCustomVictoryMessage( self.m_VictoryMessages[nTeamID] )
-		WebApi:AfterMatch(nTeamID)
-		GameRules:SetGameWinner( nTeamID )
-		broadcast_kill_event.victory = 1
-	elseif nKillsRemaining == 1 then
-		EmitGlobalSound( "ui.npe_objective_complete" )
-		broadcast_kill_event.very_close_to_victory = 1
-	elseif nKillsRemaining <= self.CLOSE_TO_VICTORY_THRESHOLD then
-		EmitGlobalSound( "ui.npe_objective_given" )
-		broadcast_kill_event.close_to_victory = 1
-	end
+		if GetMapName() == "battleground" then
+			nKillsRemaining = self.TEAM_KILLS_TO_WIN
+			for id = 0, 23 do
+				if PlayerResource:IsValidPlayer(id) then
+					local remaining_player_kills = self.TEAM_KILLS_TO_WIN - PlayerResource:GetKills(id)
+					if remaining_player_kills <= 0 then
+						GameRules:SetCustomVictoryMessage("#pre_battleground_victory"..PlayerResource:GetPlayerName(id).."#post_battleground_victory")
+						WebApi:AfterMatch(nTeamID)
+						GameRules:SetGameWinner( nTeamID )
+						broadcast_kill_event.victory = 1
+					end
+					nKillsRemaining = math.min(nKillsRemaining, remaining_player_kills)
+				end
+			end
+		end
 
-	CustomGameEventManager:Send_ServerToAllClients( "kill_event", broadcast_kill_event )
+		if nKillsRemaining <= 0 then
+			GameRules:SetCustomVictoryMessage( self.m_VictoryMessages[nTeamID] )
+			WebApi:AfterMatch(nTeamID)
+			GameRules:SetGameWinner( nTeamID )
+			broadcast_kill_event.victory = 1
+		elseif nKillsRemaining == 1 then
+			EmitGlobalSound( "ui.npe_objective_complete" )
+			broadcast_kill_event.very_close_to_victory = 1
+		elseif nKillsRemaining <= self.CLOSE_TO_VICTORY_THRESHOLD then
+			EmitGlobalSound( "ui.npe_objective_given" )
+			broadcast_kill_event.close_to_victory = 1
+		end
+
+		CustomGameEventManager:Send_ServerToAllClients( "kill_event", broadcast_kill_event )
+	end)
 end
 
 ---------------------------------------------------------------------------
@@ -340,6 +370,7 @@ function COverthrowGameMode:OnEntityKilled( event )
 		hero = EntIndexToHScript( event.entindex_attacker )
 		heroTeam = hero:GetTeam()
 	end
+
 	if event.entindex_killed and event.entindex_attacker then uniqueKey = event.entindex_attacker .. "_" .. event.entindex_killed end
 
 
@@ -381,6 +412,15 @@ function COverthrowGameMode:OnEntityKilled( event )
 
 	if killedUnit:IsRealHero() then
 		self.allSpawned = true
+
+		if GetMapName() == "battleground" then
+			killedTeam = killedUnit:GetPlayerID()
+
+			if hero and hero:IsRealHero() then
+				heroTeam = hero:GetPlayerID()
+			end
+		end
+
 		--print("Hero has been killed")
 		--Add extra time if killed by Necro Ult
 		if hero and hero:IsRealHero() then
@@ -401,7 +441,7 @@ function COverthrowGameMode:OnEntityKilled( event )
 		end
 		if hero and hero:IsRealHero() and heroTeam ~= killedTeam then
 			--print("Granting killer xp")
-			if killedUnit:GetTeam() == self.leadingTeam and self.isGameTied == false then
+			if killedTeam == self.leadingTeam and self.isGameTied == false then
 				local memberID = hero:GetPlayerID()
 				PlayerResource:ModifyGold( memberID, 500, true, 0 )
 				hero:AddExperience( 100, 0, false, false )
