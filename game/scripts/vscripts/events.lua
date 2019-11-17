@@ -174,6 +174,10 @@ function COverthrowGameMode:OnNPCSpawned( event )
 		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
 		GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
 		spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)
+		PlayerResource:SetCameraTarget(playerId, spawnedUnit)
+		Timers:CreateTimer(0.1, function()
+			PlayerResource:SetCameraTarget(playerId, nil)
+		end)
 	end
 
 	if GetMapName() == "desert_octet" and spawnedUnit:GetName() == "npc_dota_hero_warlock" then

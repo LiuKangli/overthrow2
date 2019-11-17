@@ -1,6 +1,7 @@
 "use strict";
 
 (function()	{
+	FindDotaHudElement("ToggleScoreboardButton").style.visibility = 'collapse';
 	GameEvents.Subscribe("battleground_show_scoreboard", ShowBattlegroundScoreboard);
 	CustomNetTables.SubscribeNetTableListener("battleground_scoreboard", UpdateBattlegroundScoreboard);
 })();
@@ -11,6 +12,7 @@ function ShowBattlegroundScoreboard() {
 
 function UpdateBattlegroundScoreboard(keys) {
 
+	FindDotaHudElement("ToggleScoreboardButton").style.visibility = 'collapse';
 	var data = CustomNetTables.GetTableValue(keys, "scoreboard");
 
 	for (var i = 1; i <= 24; i++) {
@@ -22,5 +24,22 @@ function UpdateBattlegroundScoreboard(keys) {
 		} else {
 			$('#BGScoreRow' + i).style.visibility = 'collapse'
 		}
+	}
+}
+
+// Utility functions
+function FindDotaHudElement (id) {
+	return GetDotaHud().FindChildTraverse(id);
+}
+
+function GetDotaHud () {
+	var p = $.GetContextPanel();
+	while (p !== null && p.id !== 'Hud') {
+		p = p.GetParent();
+	}
+	if (p === null) {
+		throw new HudNotFoundException('Could not find Hud root as parent of panel with id: ' + $.GetContextPanel().id);
+	} else {
+		return p;
 	}
 }

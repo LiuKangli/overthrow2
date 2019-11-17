@@ -10,12 +10,12 @@
 	visibility: collapse;
 }
 
-.AspectRatio4x3  #income_container
+.AspectRatio4x3  #BGScore
 {
 	x: 1330px;
 }
 
-.AspectRatio16x10  #income_container
+.AspectRatio16x10  #BGScore
 {
 	x: 1618px;
 }

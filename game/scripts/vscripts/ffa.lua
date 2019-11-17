@@ -101,14 +101,19 @@ function FFA:Init()
 	self.team_congestion[DOTA_TEAM_CUSTOM_8] = 0
 
 	Timers:CreateTimer(0, function()
-		print(GameRules:GetDOTATime(false, true))
 		if GameRules:GetDOTATime(false, true) > 0 then
 			CustomGameEventManager:Send_ServerToAllClients("battleground_show_scoreboard", {})
 
 			for _, hero in pairs(HeroList:GetAllHeroes()) do
 				hero:RemoveModifierByName("modifier_battleground_game_start")
 			end
+		else
+			return 0.1
+		end
+	end)
 
+	Timers:CreateTimer(0, function()
+		if self.max_player_id >= 23 then
 			self:OptimizeTeams()
 		else
 			return 0.1
