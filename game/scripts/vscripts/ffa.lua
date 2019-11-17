@@ -101,7 +101,7 @@ function FFA:Init()
 	self.team_congestion[DOTA_TEAM_CUSTOM_8] = 0
 
 	Timers:CreateTimer(0, function()
-		if self.max_player_id >= 23 then
+		if GetDOTATime(false, false) > 0 then
 			CustomGameEventManager:Send_ServerToAllClients("battleground_show_scoreboard", {})
 
 			for _, hero in pairs(HeroList:GetAllHeroes()) do
@@ -110,7 +110,7 @@ function FFA:Init()
 
 			self:OptimizeTeams()
 		else
-			return 1
+			return 0.1
 		end
 	end)
 
