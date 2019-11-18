@@ -86,10 +86,35 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		elseif GetMapName() == "temple_sextet" then
 			self.TEAM_KILLS_TO_WIN = 70
 		elseif GetMapName() == "battleground" then
-			self.TEAM_KILLS_TO_WIN = 25
+			self.TEAM_KILLS_TO_WIN = 20
 			if IsInToolsMode() then
 				self.TEAM_KILLS_TO_WIN = 5
 			end
+
+			-- Game start countdown
+			GameRules:SendCustomMessage("#battleground_countdown_30", 0, 0)
+			Timers:CreateTimer(10, function()
+				GameRules:SendCustomMessage("#battleground_countdown_20", 0, 0)
+			end)
+			Timers:CreateTimer(20, function()
+				GameRules:SendCustomMessage("#battleground_countdown_10", 0, 0)
+			end)
+			Timers:CreateTimer(25, function()
+				GameRules:SendCustomMessage("#battleground_countdown_5", 0, 0)
+			end)
+			Timers:CreateTimer(27, function()
+				GameRules:SendCustomMessage("#battleground_countdown_3", 0, 0)
+			end)
+			Timers:CreateTimer(28, function()
+				GameRules:SendCustomMessage("#battleground_countdown_2", 0, 0)
+			end)
+			Timers:CreateTimer(29, function()
+				GameRules:SendCustomMessage("#battleground_countdown_1", 0, 0)
+			end)
+			Timers:CreateTimer(30, function()
+				GameRules:SendCustomMessage("#battleground_countdown_start", 0, 0)
+			end)
+
 		else
 			self.TEAM_KILLS_TO_WIN = 30
 		end
@@ -174,10 +199,6 @@ function COverthrowGameMode:OnNPCSpawned( event )
 		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
 		GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
 		spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)
-		PlayerResource:SetCameraTarget(playerId, spawnedUnit)
-		Timers:CreateTimer(0.1, function()
-			PlayerResource:SetCameraTarget(playerId, nil)
-		end)
 	end
 
 	if GetMapName() == "desert_octet" and spawnedUnit:GetName() == "npc_dota_hero_warlock" then

@@ -8,6 +8,7 @@
 	background-color: gradient( linear, 0% 0%, 0% 100%, from( #000000B0 ), to( #000000E0 ) );
 	box-shadow: #000000ff -4px -4px 10px 8px;
 	visibility: collapse;
+	z-index: -10;
 }
 
 .AspectRatio4x3  #BGScore
@@ -52,4 +53,15 @@
 	horizontal-align: left;
 	vertical-align: center;
 	box-shadow: #000000ff -2px -2px 4px 4px;
+}
+
+.disconnected
+{
+	saturation: 0.0;
+}
+
+.abandoned
+{
+	saturation: 0.7;
+	wash-color: #FF0000E0;
 }

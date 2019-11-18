@@ -34,7 +34,7 @@ function FFA:Init()
 	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_8, 0, 128, 0)
 
 	self.forbidden_distance = 1000
-	self.max_player_id = -1
+	self.valid_player_ids = {}
 	self.player_heroes = {}
 	self.player_positions = {}
 	self.player_teams = {}
@@ -56,7 +56,7 @@ function FFA:Init()
 
 					self.player_positions[id] = self.player_heroes[id]:GetAbsOrigin()
 					self.player_teams[id] = self.player_heroes[id]:GetTeam()
-					self.max_player_id = self.max_player_id + 1
+					table.insert(self.valid_player_ids, id)
 				else
 					return 1
 				end
@@ -113,7 +113,7 @@ function FFA:Init()
 	end)
 
 	Timers:CreateTimer(0, function()
-		if self.max_player_id >= 23 then
+		if GameRules:GetDOTATime(false, true) > 0 then
 			self:OptimizeTeams()
 		else
 			return 0.1
@@ -123,7 +123,7 @@ function FFA:Init()
 end
 
 function FFA:UpdatePlayerPositionsAndTeams()
-	for id = 0, self.max_player_id do
+	for _, id in pairs(self.valid_player_ids) do
 		self.player_positions[id] = self.player_heroes[id]:GetAbsOrigin()
 		self.player_teams[id] = self.player_heroes[id]:GetTeam()
 	end
@@ -134,7 +134,7 @@ function FFA:UpdatePlayersByTeam()
 		self.players_by_team[team] = {}
 	end
 	
-	for id = 0, self.max_player_id do
+	for _, id in pairs(self.valid_player_ids) do
 		if self.players_by_team[self.player_teams[id]] then
 			table.insert(self.players_by_team[self.player_teams[id]], id)
 		end
@@ -236,14 +236,13 @@ end
 
 
 function FFA:OptimizeTeams()
-	--print("total congestion: "..self:CalculateCongestion())
 	self:CalculateCongestion()
 
 	local best_delta = 0
 	local delta_player = 0
 	local delta_team = 0
 
-	for id = 0, self.max_player_id do
+	for _, id in pairs(self.valid_player_ids) do
 		for _, team in pairs(self.teams) do
 			local delta = self:CalculatePlayerSwitchDelta(id, team)
 			if delta > best_delta then

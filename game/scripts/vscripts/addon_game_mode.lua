@@ -287,6 +287,9 @@ function COverthrowGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetPauseEnabled(IsInToolsMode())
 	GameRules:GetGameModeEntity():SetDraftingHeroPickSelectTimeOverride( 60 )
 
+	-- Testing-only setting
+	GameRules:GetGameModeEntity():SetFogOfWarDisabled(true)
+
 	GameRules:LockCustomGameSetupTeamAssignment(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(1)
 
@@ -497,6 +500,12 @@ function COverthrowGameMode:UpdateScoreboard()
 			scoreboard[order].score = table.score
 			if PlayerResource:GetSelectedHeroEntity(table.team) then
 				scoreboard[order].hero = PlayerResource:GetSelectedHeroEntity(table.team):GetUnitName()
+			end
+			if PlayerResource:GetConnectionState(table.team) == DOTA_CONNECTION_STATE_DISCONNECTED then
+				scoreboard[order].disconnected = true
+			end
+			if PlayerResource:GetConnectionState(table.team) == DOTA_CONNECTION_STATE_ABANDONED then
+				scoreboard[order].abandoned = true
 			end
 		end
 		CustomNetTables:SetTableValue("battleground_scoreboard", "scoreboard", scoreboard)

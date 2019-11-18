@@ -3,6 +3,16 @@
 	// Common start
 	"pre_battleground_victory"						""
 	"post_battleground_victory"						" wins!"
+
+	"battleground_countdown_30"						"Game will be starting in 30 seconds!"
+	"battleground_countdown_20"						"Game will be starting in 20 seconds!"
+	"battleground_countdown_10"						"Game will be starting in 10 seconds!"
+	"battleground_countdown_5"						"5 seconds!"
+	"battleground_countdown_3"						"3..."
+	"battleground_countdown_2"						"2..."
+	"battleground_countdown_1"						"1..."
+	"battleground_countdown_start"					"Game starting!"
+
 	"patreon_bonus_button_text"						"Free Boots"
 	"patreon_bonus_button_tooltip"					"Support us to get this feature"
 
