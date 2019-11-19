@@ -47,7 +47,7 @@ function FFA:Init()
 
 					local newSpawnPos = RandomVector(4600)
 					FindClearSpaceForUnit(self.player_heroes[id], newSpawnPos, true)
-					GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
+					GridNav:DestroyTreesAroundPoint(newSpawnPos, 450, true)
 
 					PlayerResource:SetCameraTarget(id, self.player_heroes[id])
 					Timers:CreateTimer(0.1, function()

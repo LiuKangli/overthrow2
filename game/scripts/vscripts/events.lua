@@ -197,7 +197,7 @@ function COverthrowGameMode:OnNPCSpawned( event )
 
 		local newSpawnPos = RandomVector(RandomInt(1800, 4600))
 		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
-		GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
+		GridNav:DestroyTreesAroundPoint(newSpawnPos, 450, true)
 		spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)
 	end
 

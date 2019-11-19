@@ -256,7 +256,7 @@ function COverthrowGameMode:InitGameMode()
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_8, 0 )
 		self.m_GoldRadiusMin = 250
 		self.m_GoldRadiusMax = 550
-		self.m_GoldDropPercent = 10
+		self.m_GoldDropPercent = 4
 	else
 		self.m_GoldRadiusMin = 250
 		self.m_GoldRadiusMax = 550
