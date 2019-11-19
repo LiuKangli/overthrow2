@@ -86,7 +86,7 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		elseif GetMapName() == "temple_sextet" then
 			self.TEAM_KILLS_TO_WIN = 70
 		elseif GetMapName() == "battleground" then
-			self.TEAM_KILLS_TO_WIN = 20
+			self.TEAM_KILLS_TO_WIN = 12
 			if IsInToolsMode() then
 				self.TEAM_KILLS_TO_WIN = 5
 			end
@@ -195,7 +195,7 @@ function COverthrowGameMode:OnNPCSpawned( event )
 			end
 		end
 
-		local newSpawnPos = Vector(RandomInt(0, 22100) - 11200, RandomInt(0, 22000) - 11200, 256)
+		local newSpawnPos = RandomVector(RandomInt(1800, 4600))
 		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
 		GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
 		spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)

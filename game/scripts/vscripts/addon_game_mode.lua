@@ -254,9 +254,9 @@ function COverthrowGameMode:InitGameMode()
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_6, 0 )
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_7, 0 )
 		GameRules:SetCustomGameTeamMaxPlayers( DOTA_TEAM_CUSTOM_8, 0 )
-		self.m_GoldRadiusMin = 300
-		self.m_GoldRadiusMax = 1400
-		self.m_GoldDropPercent = 12
+		self.m_GoldRadiusMin = 250
+		self.m_GoldRadiusMax = 550
+		self.m_GoldDropPercent = 10
 	else
 		self.m_GoldRadiusMin = 250
 		self.m_GoldRadiusMax = 550
@@ -286,9 +286,6 @@ function COverthrowGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetDamageFilter( Dynamic_Wrap( COverthrowGameMode, "DamageFilter" ), self )
 	GameRules:GetGameModeEntity():SetPauseEnabled(IsInToolsMode())
 	GameRules:GetGameModeEntity():SetDraftingHeroPickSelectTimeOverride( 60 )
-
-	-- Testing-only setting
-	GameRules:GetGameModeEntity():SetFogOfWarDisabled(true)
 
 	GameRules:LockCustomGameSetupTeamAssignment(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(1)
@@ -601,9 +598,9 @@ function COverthrowGameMode:OnThink()
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 
 		--Spawn Gold Bags
+		COverthrowGameMode:ThinkGoldDrop()
+		COverthrowGameMode:ThinkSpecialItemDrop()
 		if GetMapName() ~= "battleground" then
-			COverthrowGameMode:ThinkGoldDrop()
-			COverthrowGameMode:ThinkSpecialItemDrop()
 			COverthrowGameMode:ThinkPumpkins()
 		end
 	end

@@ -1,12 +1,14 @@
 "use strict";
 
 (function()	{
-	FindDotaHudElement("ToggleScoreboardButton").style.visibility = 'collapse';
-	GameEvents.Subscribe("battleground_show_scoreboard", ShowBattlegroundScoreboard);
-	CustomNetTables.SubscribeNetTableListener("battleground_scoreboard", UpdateBattlegroundScoreboard);
+	if (Game.GetMapInfo().map_display_name == "battleground") {
+		FindDotaHudElement("ToggleScoreboardButton").style.visibility = 'collapse';
+		GameEvents.Subscribe("battleground_show_scoreboard", ShowBattlegroundScoreboard);
+		CustomNetTables.SubscribeNetTableListener("battleground_scoreboard", UpdateBattlegroundScoreboard);
 
-	var shop_button = FindDotaHudElement("ShopButton");
-	$.RegisterEventHandler("DOTAHUDToggleShop", shop_button, ToggleScoreboardVisibility);
+		var shop_button = FindDotaHudElement("ShopButton");
+		$.RegisterEventHandler("DOTAHUDToggleShop", shop_button, ToggleScoreboardVisibility);
+	}
 })();
 
 function ShowBattlegroundScoreboard() {

@@ -45,7 +45,7 @@ function FFA:Init()
 				if PlayerResource:GetSelectedHeroEntity(id) then
 					self.player_heroes[id] = PlayerResource:GetSelectedHeroEntity(id)
 
-					local newSpawnPos = Vector(RandomInt(0, 22100) - 11200, RandomInt(0, 22000) - 11200, 256)
+					local newSpawnPos = RandomVector(4600)
 					FindClearSpaceForUnit(self.player_heroes[id], newSpawnPos, true)
 					GridNav:DestroyTreesAroundPoint(newSpawnPos, 256, true)
 
@@ -255,8 +255,11 @@ function FFA:OptimizeTeams()
 
 	if best_delta > 0 then
 		print("switching player "..delta_player.." to team "..delta_team..", resulting in "..best_delta.." decrease in congestion")
+		local player_gold = PlayerResource:GetGold(delta_player)
 		PlayerResource:SetCustomTeamAssignment(delta_player, delta_team)
 		self.player_heroes[delta_player]:SetTeam(delta_team)
+		PlayerResource:SetGold(delta_player, player_gold, true)
+		PlayerResource:SetGold(delta_player, 0, false)
 	end
 
 	Timers:CreateTimer(0.03, function()
