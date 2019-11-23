@@ -11,8 +11,7 @@ function modifier_battleground_game_start:CheckState()
 		[MODIFIER_STATE_INVULNERABLE] = true,
 		[MODIFIER_STATE_FROZEN] = true,
 		[MODIFIER_STATE_COMMAND_RESTRICTED] = true,
-		[MODIFIER_STATE_NOT_ON_MINIMAP] = true,
-		[MODIFIER_STATE_NO_HEALTH_BAR] = true
+		[MODIFIER_STATE_NOT_ON_MINIMAP] = true
 
 	}
 	return states

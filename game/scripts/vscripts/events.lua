@@ -86,7 +86,7 @@ function COverthrowGameMode:OnGameRulesStateChange()
 		elseif GetMapName() == "temple_sextet" then
 			self.TEAM_KILLS_TO_WIN = 70
 		elseif GetMapName() == "battleground" then
-			self.TEAM_KILLS_TO_WIN = 12
+			self.TEAM_KILLS_TO_WIN = 20
 			if IsInToolsMode() then
 				self.TEAM_KILLS_TO_WIN = 5
 			end
@@ -198,7 +198,13 @@ function COverthrowGameMode:OnNPCSpawned( event )
 		local newSpawnPos = RandomVector(RandomInt(1800, 4600))
 		FindClearSpaceForUnit(spawnedUnit, newSpawnPos, true)
 		GridNav:DestroyTreesAroundPoint(newSpawnPos, 450, true)
-		spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)
+
+		PlayerResource:SetCameraTarget(playerId, spawnedUnit)
+		Timers:CreateTimer(0.1, function()
+			PlayerResource:SetCameraTarget(playerId, nil)
+		end)
+
+		--spawnedUnit:AddNewModifier(spawnedUnit, nil, "modifier_core_spawn_movespeed", nil)
 	end
 
 	if GetMapName() == "desert_octet" and spawnedUnit:GetName() == "npc_dota_hero_warlock" then

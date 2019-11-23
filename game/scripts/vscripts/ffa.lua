@@ -22,16 +22,16 @@ function FFA:Init()
 		GameRules:SetCustomGameTeamMaxPlayers(team, 24)
 	end
 
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_GOODGUYS, 255, 255, 255)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_BADGUYS, 255, 255, 0)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_1, 255, 0, 255)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_2, 255, 0, 0)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_3, 0, 255, 255)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_4, 0, 255, 0)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_5, 0, 0, 255)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_6, 0, 0, 0)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_7, 128, 0, 128)
-	--SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_8, 0, 128, 0)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_GOODGUYS, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_BADGUYS, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_1, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_2, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_3, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_4, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_5, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_6, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_7, 101, 212, 19)
+	SetTeamCustomHealthbarColor(DOTA_TEAM_CUSTOM_8, 101, 212, 19)
 
 	self.forbidden_distance = 1000
 	self.valid_player_ids = {}
@@ -45,14 +45,9 @@ function FFA:Init()
 				if PlayerResource:GetSelectedHeroEntity(id) then
 					self.player_heroes[id] = PlayerResource:GetSelectedHeroEntity(id)
 
-					local newSpawnPos = RandomVector(4600)
+					local newSpawnPos = RandomVector(1600)
 					FindClearSpaceForUnit(self.player_heroes[id], newSpawnPos, true)
 					GridNav:DestroyTreesAroundPoint(newSpawnPos, 450, true)
-
-					PlayerResource:SetCameraTarget(id, self.player_heroes[id])
-					Timers:CreateTimer(0.1, function()
-						PlayerResource:SetCameraTarget(id, nil)
-					end)
 
 					self.player_positions[id] = self.player_heroes[id]:GetAbsOrigin()
 					self.player_teams[id] = self.player_heroes[id]:GetTeam()
@@ -262,7 +257,7 @@ function FFA:OptimizeTeams()
 		PlayerResource:SetGold(delta_player, 0, false)
 	end
 
-	Timers:CreateTimer(0.03, function()
+	Timers:CreateTimer(0.5, function()
 		self:OptimizeTeams()
 	end)
 end
