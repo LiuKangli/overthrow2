@@ -136,11 +136,11 @@ function COverthrowGameMode:OnNPCSpawned( event )
 	local playerId = spawnedUnit:GetPlayerID()
 	local psets = Patreons:GetPlayerSettings(playerId)
 
-	if psets.level > 1 and _G.personalCouriers[playerId] == nil then
-		Timers:CreateTimer(2.0, function()
-			CreatePrivateCourier(playerId, spawnedUnit, spawnedUnit:GetAbsOrigin())
-		end)
-	end
+	--if psets.level > 1 and _G.personalCouriers[playerId] == nil then
+	--	Timers:CreateTimer(2.0, function()
+	--		CreatePrivateCourier(playerId, spawnedUnit, spawnedUnit:GetAbsOrigin())
+	--	end)
+	--end
 
 	Timers:CreateTimer(1, function()
 		if spawnedUnit:HasModifier("modifier_silencer_int_steal") then
