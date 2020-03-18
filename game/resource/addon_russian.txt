@@ -585,5 +585,15 @@
 
 		"HighSupportersOnly"					"Для высокоуровневых поддержавших"
 		"SupportersOnly"						"Для поддержавших"
+		
+		"desert_octet_vote"						"УБИЙСТВ ДЛЯ ПОБЕДЫ"
+		"desert_octet_vote_name1"				"90"
+		"desert_octet_vote_name2"				"110"
+		"desert_octet_vote_name3"				"130"
+		"desert_octet_vote_name4"				"150"
+		//"desert_octet_vote_tooltip1"			""
+		//"desert_octet_vote_tooltip2"			""
+		//"desert_octet_vote_tooltip3"			""
+		//"desert_octet_vote_tooltip4"			""
 	}
 }

@@ -668,5 +668,15 @@
 
 		"HighSupportersOnly"					"High Supporters Only"
 		"SupportersOnly"						"Supporters Only"
+		
+		"desert_octet_vote"						"KILLS TO WIN"
+		"desert_octet_vote_name1"				"90"
+		"desert_octet_vote_name2"				"110"
+		"desert_octet_vote_name3"				"130"
+		"desert_octet_vote_name4"				"150"
+		//"desert_octet_vote_tooltip1"			""
+		//"desert_octet_vote_tooltip2"			""
+		//"desert_octet_vote_tooltip3"			""
+		//"desert_octet_vote_tooltip4"			""
 	}
 }

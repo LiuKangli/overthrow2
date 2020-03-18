@@ -389,51 +389,44 @@ function COverthrowGameMode:InitGameMode()
 		false
 	}
 	
-	_G.opvotes.data = VotesFilter(LoadKeyValues("scripts/votes.txt"))
-	CustomNetTables:SetTableValue( "pregame_votes", "votes_data", _G.opvotes.data)
+	CustomNetTables:SetTableValue( "pregame_votes", "votes_data", VotesFilter(LoadKeyValues("scripts/votes.txt")))
 end
 
 function VotesFilter(tableV)
 	if tableV.ready and tableV.data then
 		for vote_name,_ in pairs( tableV.data ) do
-			print(vote_name)
+			-- print(vote_name)
 			if vote_name == "desert_octet_vote" then
-				print(GetMapName())
+				-- print(GetMapName())
 				if GetMapName() ~= "desert_octet" then
 					tableV.data[vote_name] = nil
 				end
 			end
 		end
+		CustomNetTables:SetTableValue( "pregame_votes", "votes", _G.opvotes)
+		return tableV.data
 	end
 	-- DeepPrintTable(tableV)
-	return tableV
+	return nil
 end
 
 function COverthrowGameMode:GetVoteWinner(vote_name)
-	local vote_id = 0
 	-- print(vote_name)
-	for now_vote_name,_ in pairs( _G.opvotes.data.data ) do
-		-- print(now_vote_name)
-		if now_vote_name == vote_name then
-			local allvotes = {}
-			for _,votes in pairs( _G.opvotes.players ) do
-				if not allvotes[votes[vote_id]] then allvotes[votes[vote_id]] = 0 end
-				allvotes[votes[vote_id]] = allvotes[votes[vote_id]] + 1
-			end
-			-- print(allvotes)
-			local maxcol = 0
-			local maxvote = nil
-			for vote,col in pairs( allvotes ) do
-				if maxcol < col then
-					maxcol = col
-					maxvote = vote
-				end
-			end
-			return maxvote
-		end
-		vote_id = vote_id + 1
+	local allvotes = {}
+	for _,votes in pairs( _G.opvotes.players ) do
+		if not allvotes[votes[vote_name]] then allvotes[votes[vote_name]] = 0 end
+		allvotes[votes[vote_name]] = allvotes[votes[vote_name]] + 1
 	end
-	return nil
+	-- print(allvotes)
+	local maxcol = 0
+	local maxvote = nil
+	for vote,col in pairs( allvotes ) do
+		if maxcol < col then
+			maxcol = col
+			maxvote = vote
+		end
+	end
+	return maxvote
 end
 
 function COverthrowGameMode:OPVote(keys)

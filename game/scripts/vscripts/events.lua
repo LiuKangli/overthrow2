@@ -85,11 +85,11 @@ function COverthrowGameMode:OnGameRulesStateChange()
 			if voteres == 0 then
 				self.TEAM_KILLS_TO_WIN = 90
 			elseif voteres == 1 then
-				self.TEAM_KILLS_TO_WIN = 100
-			elseif voteres == 2 then
 				self.TEAM_KILLS_TO_WIN = 110
+			elseif voteres == 2 then
+				self.TEAM_KILLS_TO_WIN = 130
 			elseif voteres == 3 then
-				self.TEAM_KILLS_TO_WIN = 120
+				self.TEAM_KILLS_TO_WIN = 150
 			else
 				self.TEAM_KILLS_TO_WIN = 90
 			end

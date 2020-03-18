@@ -1,17 +1,18 @@
-
+var voteidtoname = {};
+var votenametoid = {};
 var votesblank = {};
 
 function Vote(vote,id) 
 {
     // $.Msg(vote);
     // $.Msg(id);
-    var check = $("#SettingsList").GetChild(vote).GetChild(id+2).GetChild(1)
+    var check = $("#SettingsList").GetChild(vote).GetChild(id+2).GetChild(1);
     if (!check.checked)
     {
       check.checked = true;
     }
     {
-      GameEvents.SendCustomGameEventToServer("OPVote", {vote: vote, id: id});
+      GameEvents.SendCustomGameEventToServer("OPVote", {vote: voteidtoname[vote], id: id});
       for (var button_id in votesblank[vote]) 
       {
         if (button_id != id)
@@ -49,31 +50,42 @@ function SetOnmouseout(panel)
     // StartSettings();
     // GameEvents.Subscribe("updatevote", UpdateVote);
     SubscribeToNetTableKey('pregame_votes', 'votes_data', function(kv) {
-      if (kv && kv.ready && kv.data)
+      if (kv)
       {
         $("#SettingsList").visible = true;
         // $.Msg(kv);
         var vote_id = 0;
-        for (var votename in kv.data) 
+        for (var votename in kv) 
         {
+          voteidtoname[vote_id] = votename;
+          votenametoid[votename] = vote_id;
           votesblank[vote_id] = {};
           $("#SettingsList").BLoadLayoutSnippet("Vote");
           $("#SettingsList").GetChild(vote_id).GetChild(0).text = $.Localize(votename);
-          $("#SettingsList").GetChild(vote_id).GetChild(1).SetImage(kv.data[votename].image);
+          $("#SettingsList").GetChild(vote_id).GetChild(1).SetImage(kv[votename].image);
           var button_id = 0;
-          for (var buttonid in kv.data[votename]) 
+          var def_button_id = null;
+          for (var buttonid in kv[votename]) 
           {
-            if (buttonid != "image")
+            if (buttonid != "image" && buttonid != "default")
             {
+              if (kv[votename].default == buttonid)
+              {
+                def_button_id = button_id;
+              }
               $("#SettingsList").GetChild(vote_id).BLoadLayoutSnippet("VoteButton");
               var thisbutton = $("#SettingsList").GetChild(vote_id).GetChild(button_id+2);
-              thisbutton.GetChild(0).text = $.Localize(kv.data[votename][buttonid].name);
-              if (kv.data[votename][buttonid].tooltip) SetOnmouseover(thisbutton,$.Localize(kv.data[votename][buttonid].tooltip));
+              thisbutton.GetChild(0).text = $.Localize(kv[votename][buttonid].name);
+              if (kv[votename][buttonid].tooltip) SetOnmouseover(thisbutton,$.Localize(kv[votename][buttonid].tooltip));
               SetOnmouseout(thisbutton);
               SetOnactivate(thisbutton.GetChild(1),vote_id,button_id);
               votesblank[vote_id][button_id] = thisbutton;
               button_id++;
             }
+          }
+          if (def_button_id != null)
+          {
+            Vote(vote_id,def_button_id);
           }
           vote_id++;
         }
@@ -100,9 +112,9 @@ function SetOnmouseout(panel)
       // $.Msg(allvotes);
       for (var pid in kv.players) 
       {
-        for (var voteid in kv.players[pid]) 
+        for (var votename in kv.players[pid]) 
         {
-          allvotes[voteid][kv.players[pid][voteid]] += 1;
+          allvotes[votenametoid[votename]][kv.players[pid][votename]] += 1;
         }
       }
       // $.Msg(allvotes);

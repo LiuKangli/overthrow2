@@ -6,25 +6,26 @@
 		"desert_octet_vote"
 		{
 			"image"		"file://{images}/custom_game/goal_logo.psd"
+			"default"	"1"
 			"1"
 			{
 				"name"		"desert_octet_vote_name1"
-				"tooltip"	"desert_octet_vote_tooltip1"
+				//"tooltip"	"desert_octet_vote_tooltip1"
 			}
 			"2"
 			{
 				"name"		"desert_octet_vote_name2"
-				"tooltip"	"desert_octet_vote_tooltip2"
+				//"tooltip"	"desert_octet_vote_tooltip2"
 			}
 			"3"
 			{
 				"name"		"desert_octet_vote_name3"
-				"tooltip"	"desert_octet_vote_tooltip3"
+				//"tooltip"	"desert_octet_vote_tooltip3"
 			}
 			"4"
 			{
 				"name"		"desert_octet_vote_name4"
-				"tooltip"	"desert_octet_vote_tooltip4"
+				//"tooltip"	"desert_octet_vote_tooltip4"
 			}
 		}
 		// "vote_name2"
