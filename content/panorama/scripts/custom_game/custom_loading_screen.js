@@ -53,7 +53,7 @@ function SetOnmouseout(panel)
       if (kv)
       {
         $("#SettingsList").visible = true;
-        // $.Msg(kv);
+        $.Msg(kv);
         var vote_id = 0;
         for (var votename in kv) 
         {
@@ -97,7 +97,7 @@ function SetOnmouseout(panel)
       }
     });
     SubscribeToNetTableKey('pregame_votes', 'votes', function(kv) {
-      // $.Msg(kv);
+      $.Msg(kv);
       // $.Msg(votesblank);
       var allvotes = {};
       for (var vote_id in votesblank) 
