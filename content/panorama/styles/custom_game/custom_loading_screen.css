@@ -214,3 +214,75 @@
 	{
 	}
 }
+
+.VoteLabel
+{
+    font-size: 26px;
+	margin-left: 26px;
+    font-weight: bold;
+    color: #b6b6b6;
+}
+
+.VoteButtonLabel
+{
+	vertical-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.PrcButtonLabel
+{
+	horizontal-align: center;
+	vertical-align: center;
+	margin-left: 280px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #b6b6b6;
+}
+
+.VoteButtonIcon
+{
+    margin-top: -24px;
+    width: 20px;
+	height: 20px;
+	vertical-align: center;
+}
+
+.MaxPrc
+{
+    color: #00a51b;
+}
+
+#SettingsList
+{
+    /* width: 290px;
+	height: 180px; */
+	flow-children: down;
+    margin-top: 6%;
+}
+
+.VoteButton
+{
+    margin-top: 3px;
+    width: 330px;
+}
+
+.VoteToggleButton
+{
+   horizontal-align: right;
+   vertical-align: center;
+   margin-right: 60px;
+}
+
+.Vote
+{
+	flow-children: down;
+    padding-left: 16px;
+	padding-right: 16px;
+	padding-bottom: 6px;
+    margin-left: 16px;
+    margin-top: 16px;
+    background-color: gradient( linear, 100% 0%, 100% 100%, from( #111111 ), color-stop( 0.01, #202327 ), color-stop( 0.2, #141619ff ), to( #000000dd ) );
+    box-shadow: black -4px -4px 8px 8px;
+}

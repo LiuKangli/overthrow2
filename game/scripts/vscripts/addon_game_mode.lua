@@ -38,6 +38,8 @@ local game_start = true
 _G.personalCouriers = {}
 _G.mainTeamCouriers = {}
 _G.tPlayersMuted = {}
+_G.opvotes = {}
+_G.opvotes.players = {}
 
 ---------------------------------------------------------------------------
 -- COverthrowGameMode class
@@ -292,8 +294,9 @@ function COverthrowGameMode:InitGameMode()
 	if IsInToolsMode() then
 		GameRules:GetGameModeEntity():SetDraftingBanningTimeOverride(0)
 	end
-	GameRules:LockCustomGameSetupTeamAssignment(true)
-	GameRules:SetCustomGameSetupAutoLaunchDelay(1)
+	-- GameRules:LockCustomGameSetupTeamAssignment(true)
+	-- GameRules:SetCustomGameSetupAutoLaunchDelay(1)
+	CustomGameEventManager:RegisterListener("OPVote", Dynamic_Wrap(COverthrowGameMode, 'OPVote'))
 
 	ListenToGameEvent( "game_rules_state_change", Dynamic_Wrap( COverthrowGameMode, 'OnGameRulesStateChange' ), self )
 	ListenToGameEvent( "npc_spawned", Dynamic_Wrap( COverthrowGameMode, "OnNPCSpawned" ), self )
@@ -385,6 +388,61 @@ function COverthrowGameMode:InitGameMode()
 		false,
 		false
 	}
+	
+	_G.opvotes.data = VotesFilter(LoadKeyValues("scripts/votes.txt"))
+	CustomNetTables:SetTableValue( "pregame_votes", "votes_data", _G.opvotes.data)
+end
+
+function VotesFilter(tableV)
+	if tableV.ready and tableV.data then
+		for vote_name,_ in pairs( tableV.data ) do
+			print(vote_name)
+			if vote_name == "desert_octet_vote" then
+				print(GetMapName())
+				if GetMapName() ~= "desert_octet" then
+					tableV.data[vote_name] = nil
+				end
+			end
+		end
+	end
+	-- DeepPrintTable(tableV)
+	return tableV
+end
+
+function COverthrowGameMode:GetVoteWinner(vote_name)
+	local vote_id = 0
+	-- print(vote_name)
+	for now_vote_name,_ in pairs( _G.opvotes.data.data ) do
+		-- print(now_vote_name)
+		if now_vote_name == vote_name then
+			local allvotes = {}
+			for _,votes in pairs( _G.opvotes.players ) do
+				if not allvotes[votes[vote_id]] then allvotes[votes[vote_id]] = 0 end
+				allvotes[votes[vote_id]] = allvotes[votes[vote_id]] + 1
+			end
+			-- print(allvotes)
+			local maxcol = 0
+			local maxvote = nil
+			for vote,col in pairs( allvotes ) do
+				if maxcol < col then
+					maxcol = col
+					maxvote = vote
+				end
+			end
+			return maxvote
+		end
+		vote_id = vote_id + 1
+	end
+	return nil
+end
+
+function COverthrowGameMode:OPVote(keys)
+	if _G.opvotes.players[keys.PlayerID] == nil then
+		_G.opvotes.players[keys.PlayerID] = {}
+	end
+	_G.opvotes.players[keys.PlayerID][keys.vote] = keys.id
+	-- DeepPrintTable(_G.opvotes)
+	CustomNetTables:SetTableValue( "pregame_votes", "votes", _G.opvotes)
 end
 
 ---------------------------------------------------------------------------

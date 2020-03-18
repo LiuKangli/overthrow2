@@ -6,6 +6,8 @@
 		"disable_help",
 
 		"custom_stats",
-		"cosmetics"
+		"cosmetics",
+		
+		"pregame_votes"
 	]
 }
