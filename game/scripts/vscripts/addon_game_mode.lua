@@ -294,8 +294,8 @@ function COverthrowGameMode:InitGameMode()
 	if IsInToolsMode() then
 		GameRules:GetGameModeEntity():SetDraftingBanningTimeOverride(0)
 	end
-	-- GameRules:LockCustomGameSetupTeamAssignment(true)
-	-- GameRules:SetCustomGameSetupAutoLaunchDelay(1)
+	GameRules:LockCustomGameSetupTeamAssignment(true)
+	GameRules:SetCustomGameSetupAutoLaunchDelay(30)
 	CustomGameEventManager:RegisterListener("OPVote", Dynamic_Wrap(COverthrowGameMode, 'OPVote'))
 
 	ListenToGameEvent( "game_rules_state_change", Dynamic_Wrap( COverthrowGameMode, 'OnGameRulesStateChange' ), self )
