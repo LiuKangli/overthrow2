@@ -295,7 +295,6 @@ function COverthrowGameMode:InitGameMode()
 		GameRules:GetGameModeEntity():SetDraftingBanningTimeOverride(0)
 	end
 	GameRules:LockCustomGameSetupTeamAssignment(true)
-	GameRules:SetCustomGameSetupAutoLaunchDelay(30)
 	CustomGameEventManager:RegisterListener("OPVote", Dynamic_Wrap(COverthrowGameMode, 'OPVote'))
 
 	ListenToGameEvent( "game_rules_state_change", Dynamic_Wrap( COverthrowGameMode, 'OnGameRulesStateChange' ), self )
@@ -389,7 +388,17 @@ function COverthrowGameMode:InitGameMode()
 		false
 	}
 	
-	CustomNetTables:SetTableValue( "pregame_votes", "votes_data", VotesFilter(LoadKeyValues("scripts/votes.txt")))
+	local votes = VotesFilter(LoadKeyValues("scripts/votes.txt"))
+	local votecol = 0
+	for _,_ in pairs( votes ) do
+		votecol = votecol + 1
+	end
+	if votecol > 0 then
+		GameRules:SetCustomGameSetupAutoLaunchDelay(30)
+	else
+		GameRules:SetCustomGameSetupAutoLaunchDelay(1)
+	end
+	CustomNetTables:SetTableValue( "pregame_votes", "votes_data", votes)
 end
 
 function VotesFilter(tableV)
